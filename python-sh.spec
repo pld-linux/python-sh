@@ -18,7 +18,7 @@ URL:		https://amoffat.github.io/sh/
 # remove BR: python-devel for 'noarch' packages.
 BuildRequires:	rpm-pythonprov
 # if py_postclean is used
-BuildRequires:	rpmbuild(macros) >= 1.219
+BuildRequires:	rpmbuild(macros) >= 1.710
 # when using /usr/bin/env or other in-place substitutions
 #BuildRequires:	sed >= 4.0
 %if %{with python2}
