@@ -9,7 +9,7 @@
 Summary:	Python subprocess interface
 Name:		python-%{module}
 Version:	1.11
-Release:	8
+Release:	9
 License:	MIT
 Group:		Libraries/Python
 Source0:	https://files.pythonhosted.org/packages/source/s/%{pypi_name}/%{pypi_name}-%{version}.tar.gz
