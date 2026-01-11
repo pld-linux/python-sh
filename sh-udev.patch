@@ -1,0 +1,47 @@
+Some udev-based systems don't have /dev/fd symlink
+--- sh-1.14.3/sh.py.orig	2022-07-18 08:46:38.000000000 +0200
++++ sh-1.14.3/sh.py	2026-01-11 11:33:08.928375012 +0100
+@@ -2065,7 +2065,13 @@ class OProc(object):
+                     pass_fds.update(ca["pass_fds"])
+ 
+                     # don't inherit file descriptors
+-                    inherited_fds = os.listdir("/dev/fd")
++                    try:
++                        inherited_fds = os.listdir("/dev/fd")
++                    except OSError:
++                        # Some systems don't have /dev/fd. Raises OSError in
++                        # Python2, FileNotFoundError on Python3. The latter doesn't
++                        # exist on Python2, but inherits from IOError, which does.
++                        inherited_fds = os.listdir("/proc/self/fd")
+                     inherited_fds = set(int(fd) for fd in inherited_fds) - pass_fds
+                     for fd in inherited_fds:
+                         try:
+--- sh-1.14.3/test.py.orig	2022-07-18 08:46:38.000000000 +0200
++++ sh-1.14.3/test.py	2026-01-11 11:33:48.968592555 +0100
+@@ -614,7 +614,7 @@ print("hi")
+ 
+         py = create_tmp_test("""
+ import os
+-print(len(os.listdir("/dev/fd")))
++print(len(os.listdir("/proc/self/fd")))
+ """)
+         out = python(py.name, _close_fds=False).strip()
+         # pick some number greater than 4, since it's hard to know exactly how many fds will be open/inherted in the
+@@ -638,7 +638,7 @@ print(len(os.listdir("/dev/fd")))
+ 
+         py = create_tmp_test("""
+ import os
+-print(os.listdir("/dev/fd"))
++print(os.listdir("/proc/self/fd"))
+ """)
+         out = python(py.name).strip()
+         self.assertEqual(out, "['0', '1', '2', '3']")
+@@ -661,7 +661,7 @@ print(os.listdir("/dev/fd"))
+ 
+         py = create_tmp_test("""
+ import os
+-print(os.listdir("/dev/fd"))
++print(os.listdir("/proc/self/fd"))
+ """)
+         out = python(py.name, _pass_fds=[last_fd]).strip()
+         inherited = [0, 1, 2, 3, last_fd]

@@ -15,6 +15,7 @@ License:	MIT
 Group:		Libraries/Python
 Source0:	https://files.pythonhosted.org/packages/source/s/sh/%{module}-%{version}.tar.gz
 # Source0-md5:	d60498172876f35aef6303a9cbb8eb11
+Patch0:		sh-udev.patch
 URL:		https://pypi.org/project/sh/
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.714
@@ -58,6 +59,7 @@ tak, jakby był funkcją.
 
 %prep
 %setup -q -n %{module}-%{version}
+%patch -P0 -p1
 
 %build
 %if %{with python2}
